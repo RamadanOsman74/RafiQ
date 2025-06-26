@@ -26,5 +26,41 @@ namespace WebApi.Controllers
 
             return BadRequest(result);
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        {
+            var token = await _authService.LoginAsync(dto);
+            if (token == null)
+                return Unauthorized("Invalid credentials");
+
+            return Ok(new { token });
+        }
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAll()
+        {
+            var users = await _authService.GetAllUsersAsync();
+            return Ok(users);
+        }
+
+        [HttpGet("get-by-email")]
+        public async Task<IActionResult> GetByEmail([FromQuery] string email)
+        {
+            var user = await _authService.GetUserByEmailAsync(email);
+            if (user == null)
+                return NotFound("User not found");
+
+            return Ok(user);
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var deleted = await _authService.DeleteUserAsync(id);
+            if (!deleted)
+                return NotFound("User not found or could not be deleted");
+
+            return Ok("User deleted successfully");
+        }
     }
 }
