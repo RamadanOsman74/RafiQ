@@ -10,6 +10,6 @@ namespace Infrastructure.Data
         {
         }
 
-        // Add your DbSets here
+        
     }
 }
