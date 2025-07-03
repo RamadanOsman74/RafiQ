@@ -1,6 +1,9 @@
 using Application.Interfaces;
 using Domain.Entities;
+using Domain.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
+using Infrastructure.Seeders;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -28,6 +31,12 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
 
 /////// JWT //////
+///
+
+/***************** Registraion  ******************/
+builder.Services.AddScoped(typeof(IGenericRepository<>),typeof( GenericRepository<>));
+builder.Services.AddScoped<IRoleService, RoleService>();
+
 
 var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]);
 
@@ -58,6 +67,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+using (var scope = app.Services.CreateScope())
+{
+    await RoleSeeder.SeedAsync(scope.ServiceProvider);
+}
+
 
 app.UseHttpsRedirection();
 
